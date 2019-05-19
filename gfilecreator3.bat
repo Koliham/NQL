@@ -1,0 +1,1 @@
+python -m PyQt5.uic.pyuic -x nldlgui.ui -o nldlgui.py
