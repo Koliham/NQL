@@ -35,6 +35,19 @@
         <item>
          <widget class="QTextEdit" name="txtNL"/>
         </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Input SQL</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="textEdit"/>
+        </item>
        </layout>
       </item>
       <item>
@@ -59,7 +72,7 @@
         <item>
          <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>Resulting DSL</string>
+           <string>Resulting SQL/NQL</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -75,6 +88,9 @@
     </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="btnConvert">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="text">
        <string>Convert to DSL</string>
       </property>

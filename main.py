@@ -27,7 +27,12 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.ui.btnConvert.clicked.connect(lambda x: processInputNL(self.ui.txtNL.toPlainText()))
         self.ui.txtNL.outputfeld = self.ui.txtResultDSL
         self.ui.txtNL.setSuggestlist(self.ui.listvorschlaege)
+
+        self.ui.textEdit.setSuggestlist(self.ui.listvorschlaege)
+        self.ui.textEdit.outputfeld = self.ui.txtResultDSL
+
         self.ui.txtNL.startBackgroundThread()
+        self.ui.btnConvert.setVisible(False)
         # self.ui.txtNL.keyReleaseEvent.connect(lambda x: processInputNL(self.ui.txtNL.toPlainText()))
 
 

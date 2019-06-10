@@ -1,19 +1,16 @@
-from time import gmtime, strftime
 import traceback
 
 from models.column import Column
 from models.context import Context
 from models.nql import NQL
-from nldslfuncs.reader import inltoobj
+from models import inltoobj
 
 from nldslfuncs.nltoinlmain import nltoinl
-from nltk.corpus import stopwords
-from nldslfuncs import  preprocessor
 
 
-def nldslparse(input):
+def nldslparse(input,sql=False):
     try:
-        return nldslcompute(input)
+        return nldslcompute(input,sql)
     except:
         return [{"suggestion":"Error Suggestion","chance":1.00,"result":traceback.format_exc()}]
 
@@ -31,7 +28,7 @@ def columnreplacer(wort: str, cols: list):
 
 
 
-def nldslcompute(input : str):
+def nldslcompute(input : str,sql=False):
     context  = Context()
     suggestions = [] # the list of results in the end
     results = [] # a list of possible results = suggestions
@@ -56,7 +53,10 @@ def nldslcompute(input : str):
     inllist : list = nltoinl(input)
 
     for inltuple in inllist:
-        sqlob :NQL = inltoobj.inltosqlobj(inltuple[1], context)
+        if sql:
+            sqlob : NQL = NQL.fromsql(input)
+        else:
+            sqlob :NQL = inltoobj.inltosqlobj(inltuple[1], context)
         results.append((inltuple[0],sqlob.title,str(sqlob)))
 
     for e in results:

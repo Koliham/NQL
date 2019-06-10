@@ -1,8 +1,7 @@
 import unittest
 
 from models.nql import NQL
-from nldslfuncs.reader import inltoobj
-from moz_sql_parser import parse
+from models import inltoobj
 
 
 class TestSum(unittest.TestCase):
@@ -63,6 +62,11 @@ class TestSum(unittest.TestCase):
         sqlpred = nql.sql()
         self.assertEqual(sqlgt.lower(), sqlpred.lower())
         self.assertEqual(nlgt.lower(), nlpred.lower())
+        sql = "SELECT apfel FROM table WHERE a='sd'"
+        nqlo = NQL.fromsql(sql)
+        gtsql = "SELECT apfel FROM table WHERE a='sd'"
+        self.assertEqual(sql.lower(),gtsql.lower())
+
 
     def test_question(self):
         sqlo = NQL.fromwikisql(self.testresult2, self.testtable2)

@@ -1,7 +1,6 @@
 from models.selectstate import SelectState
 from models.wherestate import WhereState
 from models.orderstate import OrderState
-from models.context import Context
 from nldslfuncs import wordsimilarity
 # from nldslfuncs.reader import inltoobj
 from moz_sql_parser import parse
@@ -134,7 +133,7 @@ class NQL:
 
     @staticmethod
     def frominl(inlstring : str):
-        from nldslfuncs.reader import inltoobj
+        from models import inltoobj
         sqlobj = inltoobj.inltosqlobj(inlstring)
         return sqlobj
 
@@ -164,13 +163,32 @@ class NQL:
 
         # wherestate
         opdict = {"eq": "=","lt":"<","lte":"<=","gt":">","gte":">=","neq":"!="}
+        if "where" not in sqldict.keys():
+            return obj
         wheredict = sqldict["where"]
         #specification just allows either just ANDs or just ORs
         andor = [*wheredict][0]
         if andor.lower() == "and":
             obj.wherestate.conj = "AND"
-        else:
+        elif andor.lower() == "or":
             obj.wherestate.conj = "OR"
+        #if its neither and, nor 'or', then there are NO multiple rel conditions.
+        else:
+            relop = [*wheredict][0].lower()
+            col = wheredict[relop][0]
+            # the third value is a pure value, if its a number, otherwise a dictionary
+            if type(wheredict[relop][1]) == dict:
+                valuekey = [*wheredict[relop][1]][0]
+                value = wheredict[relop][1][valuekey]
+            else:
+                value = wheredict[relop][1]
+            op = opdict[relop]
+            obj.wherestate.wherestates.append([col, op, value])
+            return obj
+
+        #the data type for one relation condition is different than from multiple:
+        if type(wheredict[andor][0]!=dict):
+            pass
         for relation in wheredict[andor]:
             relop = [*relation][0].lower()
             col = relation[relop][0]

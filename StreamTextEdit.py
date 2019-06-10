@@ -11,13 +11,14 @@ import threading
 
 
 class UpdateThread(QtCore.QThread):
-    inputtext : str = ""
-    inputfield : QtWidgets.QTextEdit
-
     data_downloaded = QtCore.pyqtSignal(object)
-    result = ""
-    refreshcounter = 0
-    def __init__(self):
+    def __init__(self,sql=False):
+        self.inputtext: str = ""
+        self.inputfield: QtWidgets.QTextEdit
+        self.sql = sql
+
+        self.result = ""
+        self.refreshcounter = 0
         QtCore.QThread.__init__(self)
 
     def run(self):
@@ -26,19 +27,21 @@ class UpdateThread(QtCore.QThread):
             print("refreshing " + str(self.refreshcounter))
             self.refreshcounter += 1
             nldslfuncs = reload(nldslparser)
-            result = nldslparser.nldslparse(self.inputfield.toPlainText())
+            result = nldslparser.nldslparse(self.inputfield.toPlainText(),self.sql)
             self.data_downloaded.emit(result)
 
 class StreamTextEdit(QtWidgets.QTextEdit):
 
-    lastselectedIndex : int = 0 # shows the first entry as default
-    refreshcounter : int = 0
-    outputfeld : QtWidgets.QTextEdit
-    suggestlist: QtWidgets.QListWidget
-    currentsuggestions = []
-    currentinput :str = ""
-    refreshthread : UpdateThread
-    def __init__(self, parent):
+
+    def __init__(self, parent,sql=False):
+        self.lastselectedIndex: int = 0  # shows the first entry as default
+        self.refreshcounter: int = 0
+        self.outputfeld: QtWidgets.QTextEdit
+        self.suggestlist: QtWidgets.QListWidget
+        self.currentsuggestions = []
+        self.currentinput: str = ""
+        self.refreshthread: UpdateThread
+        self.sql = sql
         super().__init__(parent=parent)
         self.setSizePolicy(PyQt5.QtWidgets.QSizePolicy.Expanding, PyQt5.QtWidgets.QSizePolicy.Expanding)
         self.show()
@@ -79,7 +82,7 @@ class StreamTextEdit(QtWidgets.QTextEdit):
         # print("refreshing " + str(self.refreshcounter))
         self.refreshcounter += 1
         nldslfuncs = reload(nldslparser)
-        self.currentsuggestions = nldslparser.nldslparse(self.toPlainText())
+        self.currentsuggestions = nldslparser.nldslparse(self.toPlainText(),self.sql)
 
 
     def refreshViews(self,daten=None):
