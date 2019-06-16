@@ -56,7 +56,7 @@ def nldslcompute(input : str,sql=False):
         if sql:
             sqlob : NQL = NQL.fromsql(input)
         else:
-            sqlob :NQL = inltoobj.inltosqlobj(inltuple[1], context)
+            sqlob :NQL = NQL.frominl(inltuple[1])
         results.append((inltuple[0],sqlob.title,str(sqlob)))
 
     for e in results:

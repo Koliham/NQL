@@ -4,12 +4,13 @@ from models.orderstate import OrderState
 from nldslfuncs import wordsimilarity
 # from nldslfuncs.reader import inltoobj
 from moz_sql_parser import parse
+import numpy as np
 
-
+VERBOSE = True
 class NQL:
 
     def __init__(self):
-        self.selstate = SelectState()
+        self.selstate = SelectState(VERBOSE)
         self.wherestate = WhereState()
         self.orderstate = OrderState()
         self.entity = "flight"  # maybe not needed
@@ -70,7 +71,7 @@ class NQL:
 
         #add the columns selected
         colindex = sqldict["sel"]
-        if type(colindex)==int:
+        if type(colindex)==int or type(colindex)==np.int64:
             obj.selstate.selcols.append(columns[colindex])
         elif type(colindex)==list:
             obj.selstate.selcols += columns[colindex]
@@ -132,9 +133,9 @@ class NQL:
         return result
 
     @staticmethod
-    def frominl(inlstring : str):
+    def frominl(inlstring : str,verbose=VERBOSE):
         from models import inltoobj
-        sqlobj = inltoobj.inltosqlobj(inlstring)
+        sqlobj = inltoobj.inltosqlobj(inlstring,verbose=verbose)
         return sqlobj
 
     @classmethod
@@ -145,18 +146,21 @@ class NQL:
         obj = cls()
         #selstate columns
         # if there is just one column to be selected, then the key 'select' doesnt have a list with one dictionary, but just the dictionary:
-        if type(sqldict["select"])==dict:
-            sqldict["select"] = [sqldict["select"]]
-        for e in sqldict["select"]:
-            v = e["value"]
-            if type(v) == dict: # in cases, when there is an aggregator like {'value': {'max': 'price'}}
-                agg = [*v][0] #get the first (and only key) which is also the aggregator
-                col = v[agg]
-                obj.selstate.selcols.append(col)
-                obj.selstate.agg = agg.upper()
-                # the specification just allows one column, when an aggregator is used, therefore the break
-                break
-            obj.selstate.selcols.append(v)
+        if type(sqldict["select"])==str and sqldict["select"]=="*":
+            obj.selstate.selcols.append(sqldict["from"])
+        else:
+            if type(sqldict["select"])==dict:
+                sqldict["select"] = [sqldict["select"]]
+            for e in sqldict["select"]:
+                v = e["value"]
+                if type(v) == dict: # in cases, when there is an aggregator like {'value': {'max': 'price'}}
+                    agg = [*v][0] #get the first (and only key) which is also the aggregator
+                    col = v[agg]
+                    obj.selstate.selcols.append(col)
+                    obj.selstate.agg = agg.upper()
+                    # the specification just allows one column, when an aggregator is used, therefore the break
+                    break
+                obj.selstate.selcols.append(v)
         # table name:
         obj.entity = sqldict["from"]
         obj.selstate.entity = sqldict["from"]
