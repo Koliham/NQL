@@ -6,7 +6,7 @@ from nldslfuncs import wordsimilarity
 from moz_sql_parser import parse
 import numpy as np
 
-VERBOSE = True
+VERBOSE = False
 class NQL:
 
     def __init__(self):
