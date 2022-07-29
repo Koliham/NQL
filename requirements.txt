@@ -38,7 +38,7 @@ kiwisolver==1.1.0
 Markdown==3.0.1
 MarkupSafe==1.1.1
 matplotlib==3.0.3
-mistune==0.8.4
+mistune==2.0.3
 mo-future==2.46.19127
 more-itertools==7.0.0
 moz-sql-parser==2.44.19084
