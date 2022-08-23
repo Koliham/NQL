@@ -42,7 +42,7 @@ mistune==0.8.4
 mo-future==2.46.19127
 more-itertools==7.0.0
 moz-sql-parser==2.44.19084
-nbconvert==5.5.0
+nbconvert==6.5.1
 nbformat==4.4.0
 nltk==3.4.1
 notebook==5.7.8
